@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class TPSCamera : MonoBehaviour
 {
 	[SerializeField] Transform cameraRoot;
-	[SerializeField] float mouseSeneitivity;
+	[SerializeField] float mouseSensitivity;
 
 	private Vector2 inputDir;
 	private float xRotation;
@@ -23,11 +23,18 @@ public class TPSCamera : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		xRotation -= -Input.GetAxis("Mouse Y") * mouseSeneitivity * Time.deltaTime;
+		//xRotation -= -Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+		xRotation -= -inputDir.y * mouseSensitivity * Time.deltaTime;
 		xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
-		transform.Rotate(Vector3.up, -Input.GetAxis("Mouse X") * mouseSeneitivity * Time.deltaTime);
+		//transform.Rotate(Vector3.up, -Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime);
+		transform.Rotate(Vector3.up, -inputDir.x * mouseSensitivity * Time.deltaTime);
 		cameraRoot.localRotation = Quaternion.Euler(xRotation, 0, 0);
+	}
+
+	private void OnLook(InputValue value)
+	{
+		inputDir = value.Get<Vector2>();
 	}
 
 }

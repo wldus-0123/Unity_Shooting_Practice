@@ -6,11 +6,15 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] CharacterController playerController;
-    [SerializeField] float moveSpeed;
-    [SerializeField] float jumpSpeed;
+    [SerializeField] Animator animator;
+
+    [SerializeField] float walkSpeed;
+	[SerializeField] float runSpeed;
+	[SerializeField] float jumpSpeed;
 
     private Vector3 moveDir;
     private float ySpeed;
+    private bool isRun;
 
 	private void Update()
 	{
@@ -20,8 +24,21 @@ public class PlayerController : MonoBehaviour
 
 	private void Move()
     {
-        playerController.Move(transform.right * moveDir.x * moveSpeed * Time.deltaTime);
-		playerController.Move(transform.forward * moveDir.z * moveSpeed * Time.deltaTime);
+        if(isRun)
+        {
+			playerController.Move(transform.right * moveDir.x * runSpeed * Time.deltaTime);
+			playerController.Move(transform.forward * moveDir.z * runSpeed * Time.deltaTime);
+            animator.SetFloat("XSpeed", moveDir.x * runSpeed, 0.1f, Time.deltaTime);
+            animator.SetFloat("YSpeed", moveDir.z * runSpeed, 0.1f, Time.deltaTime);
+		}
+        else
+        {
+			playerController.Move(transform.right * moveDir.x * walkSpeed * Time.deltaTime);
+			playerController.Move(transform.forward * moveDir.z * walkSpeed * Time.deltaTime);
+			animator.SetFloat("XSpeed", moveDir.x * walkSpeed, 0.1f, Time.deltaTime);
+			animator.SetFloat("YSpeed", moveDir.z * walkSpeed, 0.1f, Time.deltaTime);
+		}
+
 	}
 	private void Jump()
     {
@@ -46,5 +63,27 @@ public class PlayerController : MonoBehaviour
         {
             ySpeed = jumpSpeed;
         }
+    }
+
+    private void OnRun(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            isRun = true;
+        }
+        else
+        {
+            isRun = false;
+        }
+    }
+
+    private void OnFire(InputValue value)
+    {
+        animator.SetTrigger("Fire");
+    }
+
+    private void OnReload(InputValue value)
+    {
+        animator.SetTrigger("Reload");
     }
 }
